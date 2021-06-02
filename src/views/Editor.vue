@@ -1,27 +1,34 @@
 <template>
   <div class="editor">
-    <ul class="directory">
-      <li v-for="(h, i) in headings" :key="i"><span v-html="h"></span></li>
-    </ul>
-    <ckeditor
-      :editor="editor"
-      v-model="editorData"
-      @ready="handleEditorReady"
-      :config="editorConfig"
-      ref="editor"
-    ></ckeditor>
+    <div class="directory">
+      <v-treeview dense :items="headings"></v-treeview>
+    </div>
+    <div>
+      <ckeditor
+        style="border: 1px solid #ccc"
+        :editor="editor"
+        v-model="editorData"
+        @ready="handleEditorReady"
+        :config="editorConfig"
+        ref="editor"
+      ></ckeditor>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import CKEditor from "@ckeditor/ckeditor5-vue2";
+
 import Alignment from "@ckeditor/ckeditor5-alignment/src/alignment";
 import AutoFormat from "@ckeditor/ckeditor5-autoformat/src/autoformat";
 import BlockQuote from "@ckeditor/ckeditor5-block-quote/src/blockquote";
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
+import DecoupledEditor from "@ckeditor/ckeditor5-editor-decoupled/src/decouplededitor";
 // import EasyImage from "@ckeditor/ckeditor5-easy-image/src/easyimage";
 import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
 import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
+import Clipboard from "@ckeditor/ckeditor5-clipboard/src/clipboard";
 // import Comments from "@ckeditor/ckeditor5-comments/src/comments";
 import Image from "@ckeditor/ckeditor5-image/src/image";
 import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload";
@@ -33,27 +40,45 @@ import Italic from "@ckeditor/ckeditor5-basic-styles/src/italic";
 import Link from "@ckeditor/ckeditor5-link/src/link";
 import List from "@ckeditor/ckeditor5-list/src/list";
 import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph";
+import RemoveFormat from "@ckeditor/ckeditor5-remove-format/src/removeformat";
 import SimpleUploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter";
 import CKEditroInspector from "@ckeditor/ckeditor5-inspector";
+import Outline from "@/ck-plugins/outline";
 import SimpleBox from "@/ck-plugins/simplebox";
 import Placeholder from "@/ck-plugins/placeholder";
+import RemoveFormatLinks from "@/ck-plugins/removeformatlinks";
 
-@Component
+type OutlineNode = {
+  id: number;
+  tagNum: string;
+  name: string;
+  children?: OutlineNode[];
+};
+
+@Component({
+  components: { ckeditor: CKEditor.component },
+})
 export default class Editor extends Vue {
-  editor = ClassicEditor;
-  editorInstance: typeof ClassicEditor = null;
+  editor = DecoupledEditor;
+  editorInstance: typeof DecoupledEditor = null;
   editorData = "";
   editorConfig = {
+    disabled: true,
     simpleUpload: {
       uploadUrl: "https://ecomm-products.modus.workers.dev/",
       withCredentials: false,
     },
+    outline: {
+      container: ".backup",
+    },
     plugins: [
+      Outline,
       SimpleBox,
       Placeholder,
       Alignment,
       AutoFormat,
       BlockQuote,
+      Clipboard,
       // Comments,
       // EasyImage,
       Essentials,
@@ -68,6 +93,8 @@ export default class Editor extends Vue {
       Link,
       List,
       Paragraph,
+      RemoveFormat,
+      RemoveFormatLinks,
       SimpleUploadAdapter,
     ],
     heading: {
@@ -93,7 +120,13 @@ export default class Editor extends Vue {
           model: "heading3",
           view: "h3",
           title: "三级标题",
-          class: "ck-heading_heading1",
+          class: "ck-heading_heading3",
+        },
+        {
+          model: "heading4",
+          view: "h4",
+          title: "四级标题",
+          class: "ck-heading_heading4",
         },
       ],
     },
@@ -111,6 +144,7 @@ export default class Editor extends Vue {
         "numberedList",
         "bulletedList",
         "link",
+        "removeformat",
         "imageupload",
         "simplebox",
         "placeholder",
@@ -136,30 +170,75 @@ export default class Editor extends Vue {
       ],
     },
   };
-  get headings(): RegExpMatchArray | null {
-    const reg = /(?<=<h\d[^>]*?>).*?(?=<\/h\d>)/g;
-    const result = this.editorData.match(reg);
-    return result;
+  get headings(): OutlineNode[] {
+    const reg = /(?<=<h\d[^>]*?>).*?(?=<\/h(\d)>)/g;
+    const result = this.editorData.matchAll(reg);
+    let id = 0;
+    const nodes = Array.from(result).map((r) => ({
+      id: id++,
+      tagNum: r[1],
+      name: r[0],
+    }));
+    let res = [];
+    if (nodes.length < 2) {
+      return nodes;
+    }
+
+    let curr: OutlineNode | null = null;
+    let prev: OutlineNode = nodes[0];
+    const stack = [prev];
+    res = [prev];
+    for (let i = 1; i < nodes.length; i++) {
+      curr = nodes[i];
+      while (stack.length) {
+        if (curr.tagNum > prev.tagNum) {
+          if (!prev.children) prev.children = [];
+          prev.children.push(curr);
+          stack.push(curr);
+          prev = curr;
+          break;
+        } else {
+          stack.pop();
+          prev = stack[stack.length - 1];
+        }
+      }
+      if (prev === curr) continue;
+      res.push(curr);
+      stack.push(curr);
+      prev = curr;
+    }
+    return res;
   }
   handleEditorReady(editor: typeof ClassicEditor): void {
+    // this.$set(this.editorConfig, "toolbar", { items: [] });
     this.editorInstance = editor;
+    editor.ui
+      .getEditableElement()
+      .parentElement.insertBefore(
+        editor.ui.view.toolbar.element,
+        editor.ui.getEditableElement()
+      );
     this.editorData = `
-      <p>This is a simple box:</p>
-
-      <section class="simple-box">
-          <h1 class="simple-box-title">Box title</h1>
-          <div class="simple-box-description">
-              <p>The description goes here.</p>
-              <ul>
-                  <li>It can contain lists,</li>
-                  <li>and other block elements like headings.</li>
-              </ul>
-          </div>
-      </section>
+      <h1>Inline editor</h1>
+      Inline editor comes with a floating toolbar that becomes visible when the editor is focused (e.g. by clicking it). Unlike classic editor, inline editor does not render instead of the given element, it simply makes it editable. As a consequence the styles of the edited content will be exactly the same before and after the editor is created.
+      <h2>hello</h2>
+      A common scenario for using inline editor is offering users the possibility to edit content in its real location on a web page instead of doing it in a separate administration section.
+      <h1>Inline editor</h1>
+      Inline editor comes with a floating toolbar that becomes visible when the editor is focused (e.g. by clicking it). Unlike classic editor, inline editor does not render instead of the given element, it simply makes it editable. As a consequence the styles of the edited content will be exactly the same before and after the editor is created.
+      <h2>hello2</h2>
+      A common scenario for using
+      <h4>hello4</h4>
+      A common scenario for using
+      <h2>hello2</h2>
+      A common scenario for using
+      <h3>hello3</h3>
+      A common scenario for using
     `;
+    // const toolbarContainer = document.querySelector("#toolbar-container");
+    // (toolbarContainer as Element).appendChild(editor.ui.view.toolbar.element);
     CKEditroInspector.attach(editor);
 
-    editor.execute("placeholder", { value: "time" });
+    // editor.execute("placeholder", { value: "time" });
 
     // this.editorInstance.model.change((writer: any) => {
     //   writer.insertText(
@@ -174,7 +253,17 @@ export default class Editor extends Vue {
 .editor {
   display: flex;
   .directory {
-    width: 100px;
+    border: 1px solid #ccc;
+    min-width: 150px;
+    margin-top: 39px;
+    margin-bottom: 0;
+    padding: 0;
+    li {
+      text-align: left;
+      list-style-type: none;
+      text-overflow: ellipsis;
+      font-weight: bold;
+    }
   }
   :v-deep .ck.ck-editor {
     flex: 1;
