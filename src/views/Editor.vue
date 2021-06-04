@@ -1,7 +1,16 @@
 <template>
   <div class="editor">
     <div class="directory">
-      <v-treeview dense :items="headings"></v-treeview>
+      <v-treeview
+        activatable
+        dense
+        open-all
+        open-on-click
+        return-object
+        v-model="title"
+        :items="headings"
+        @update:active="handleUpdate"
+      ></v-treeview>
     </div>
     <div>
       <ckeditor
@@ -17,14 +26,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import CKEditor from "@ckeditor/ckeditor5-vue2";
 
 import Alignment from "@ckeditor/ckeditor5-alignment/src/alignment";
 import AutoFormat from "@ckeditor/ckeditor5-autoformat/src/autoformat";
 import BlockQuote from "@ckeditor/ckeditor5-block-quote/src/blockquote";
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
-import DecoupledEditor from "@ckeditor/ckeditor5-editor-decoupled/src/decouplededitor";
+// import DecoupledEditor from "@ckeditor/ckeditor5-editor-decoupled/src/decouplededitor";
 // import EasyImage from "@ckeditor/ckeditor5-easy-image/src/easyimage";
 import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
 import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
@@ -59,8 +68,8 @@ type OutlineNode = {
   components: { ckeditor: CKEditor.component },
 })
 export default class Editor extends Vue {
-  editor = DecoupledEditor;
-  editorInstance: typeof DecoupledEditor = null;
+  editor = ClassicEditor;
+  editorInstance: typeof ClassicEditor = null;
   editorData = "";
   editorConfig = {
     disabled: true,
@@ -170,6 +179,8 @@ export default class Editor extends Vue {
       ],
     },
   };
+  title = [];
+
   get headings(): OutlineNode[] {
     const reg = /(?<=<h\d[^>]*?>).*?(?=<\/h(\d)>)/g;
     const result = this.editorData.matchAll(reg);
@@ -209,6 +220,17 @@ export default class Editor extends Vue {
     }
     return res;
   }
+
+  @Watch("title")
+  handleChangeTitle(val: string): void {
+    console.log(val);
+  }
+
+  handleUpdate(node: OutlineNode[]): void {
+    if (!node[0]) return;
+    document.querySelectorAll("h1, h2, h3, h4")[node[0].id].scrollIntoView();
+  }
+
   handleEditorReady(editor: typeof ClassicEditor): void {
     // this.$set(this.editorConfig, "toolbar", { items: [] });
     this.editorInstance = editor;
@@ -231,7 +253,552 @@ export default class Editor extends Vue {
       A common scenario for using
       <h2>hello2</h2>
       A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
       <h3>hello3</h3>
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+       common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
+      A common scenario for using
       A common scenario for using
     `;
     // const toolbarContainer = document.querySelector("#toolbar-container");
@@ -255,17 +822,11 @@ export default class Editor extends Vue {
   .directory {
     border: 1px solid #ccc;
     min-width: 150px;
-    margin-top: 39px;
+    margin-top: 46px;
     margin-bottom: 0;
-    padding: 0;
-    li {
-      text-align: left;
-      list-style-type: none;
-      text-overflow: ellipsis;
-      font-weight: bold;
-    }
   }
-  :v-deep .ck.ck-editor {
+
+  :v-deep .ck.ck-reset.ck-editor {
     flex: 1;
     .simple-box {
       padding: 10px;
