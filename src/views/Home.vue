@@ -1,12 +1,14 @@
 <template>
   <div>
     <h1>home</h1>
-    <v-tabs>
+    <!-- <v-tabs>
       <v-tab v-for="tab in tabList" :key="tab.id">
         <component :is="tab.name" />
       </v-tab>
-    </v-tabs>
-    <!-- <hello-world msg="hello" /> -->
+    </v-tabs> -->
+    <hello-world msg="hello" />
+    <v-btn @click="loadPic">load</v-btn>
+    <img :src="require('@/assets/ttt/' + pic + '.png')" />
   </div>
 </template>
 
@@ -21,8 +23,10 @@ export default Vue.extend({
     HelloWorld,
   },
 
-  data: function () {
+  data() {
     return {
+      url: "",
+      pic: "logo",
       tabList: [
         {
           id: 1,
@@ -30,6 +34,14 @@ export default Vue.extend({
         },
       ],
     };
+  },
+  mounted() {
+    // const pic = require("@/assets/logo.png");
+  },
+  methods: {
+    loadPic() {
+      this.pic = "logo1";
+    },
   },
 });
 </script>

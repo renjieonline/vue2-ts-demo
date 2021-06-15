@@ -188,7 +188,7 @@ export default class Editor extends Vue {
     const nodes = Array.from(result).map((r) => ({
       id: id++,
       tagNum: r[1],
-      name: r[0],
+      name: r[0].replace(/<[^>]+>/g, ""),
     }));
     let res = [];
     if (nodes.length < 2) {
