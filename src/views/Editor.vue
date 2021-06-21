@@ -1,6 +1,7 @@
 <template>
   <div class="editor">
-    <div class="directory">
+    <button class="button" @click="handleClick">save</button>
+    <div class="directory" style="display: block">
       <v-treeview
         activatable
         dense
@@ -12,14 +13,24 @@
         @update:active="handleUpdate"
       ></v-treeview>
     </div>
-    <div>
+    <div class="left">
       <ckeditor
         style="border: 1px solid #ccc"
         :editor="editor"
-        v-model="editorData"
-        @ready="handleEditorReady"
+        v-model="editorData1"
+        @ready="handleEditorReady1"
         :config="editorConfig"
-        ref="editor"
+        ref="editor1"
+      ></ckeditor>
+    </div>
+    <div class="right">
+      <ckeditor
+        style="border: 1px solid #ccc"
+        :editor="editor"
+        v-model="editorData2"
+        @ready="handleEditorReady2"
+        :config="editorConfig"
+        ref="editor2"
       ></ckeditor>
     </div>
   </div>
@@ -28,17 +39,15 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import CKEditor from "@ckeditor/ckeditor5-vue2";
+import { escape2Html } from "@/utils";
 
 import Alignment from "@ckeditor/ckeditor5-alignment/src/alignment";
 import AutoFormat from "@ckeditor/ckeditor5-autoformat/src/autoformat";
 import BlockQuote from "@ckeditor/ckeditor5-block-quote/src/blockquote";
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
-// import DecoupledEditor from "@ckeditor/ckeditor5-editor-decoupled/src/decouplededitor";
-// import EasyImage from "@ckeditor/ckeditor5-easy-image/src/easyimage";
 import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
 import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
 import Clipboard from "@ckeditor/ckeditor5-clipboard/src/clipboard";
-// import Comments from "@ckeditor/ckeditor5-comments/src/comments";
 import Image from "@ckeditor/ckeditor5-image/src/image";
 import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload";
 import ImageReaize from "@ckeditor/ckeditor5-image/src/imageresize";
@@ -56,6 +65,8 @@ import Outline from "@/ck-plugins/outline";
 import SimpleBox from "@/ck-plugins/simplebox";
 import Placeholder from "@/ck-plugins/placeholder";
 import RemoveFormatLinks from "@/ck-plugins/removeformatlinks";
+import CommentBox from "@/ck-plugins/commentbox";
+import Comment from "@/ck-plugins/comment";
 
 type OutlineNode = {
   id: number;
@@ -69,8 +80,10 @@ type OutlineNode = {
 })
 export default class Editor extends Vue {
   editor = ClassicEditor;
-  editorInstance: typeof ClassicEditor = null;
-  editorData = "";
+  editorInstance1: typeof ClassicEditor = null;
+  editorInstance2: typeof ClassicEditor = null;
+  editorData1 = "";
+  editorData2 = "";
   editorConfig = {
     disabled: true,
     simpleUpload: {
@@ -83,6 +96,8 @@ export default class Editor extends Vue {
     plugins: [
       Outline,
       SimpleBox,
+      CommentBox,
+      Comment,
       Placeholder,
       Alignment,
       AutoFormat,
@@ -145,6 +160,7 @@ export default class Editor extends Vue {
     toolbar: {
       items: [
         "heading",
+        "comment",
         "alignment",
         "autoformat",
         "blockquote",
@@ -157,7 +173,6 @@ export default class Editor extends Vue {
         "imageupload",
         "simplebox",
         "placeholder",
-        // "comment",
         "undo",
         "redo",
       ],
@@ -183,13 +198,14 @@ export default class Editor extends Vue {
 
   get headings(): OutlineNode[] {
     const reg = /(?<=<h\d[^>]*?>).*?(?=<\/h(\d)>)/g;
-    const result = this.editorData.matchAll(reg);
+    const result = this.editorData1.matchAll(reg);
     let id = 0;
     const nodes = Array.from(result).map((r) => ({
       id: id++,
       tagNum: r[1],
-      name: r[0].replace(/<[^>]+>/g, ""),
+      name: escape2Html(r[0].replace(/<[^>]+>/g, "")),
     }));
+    console.log(nodes);
     let res = [];
     if (nodes.length < 2) {
       return nodes;
@@ -218,6 +234,7 @@ export default class Editor extends Vue {
       stack.push(curr);
       prev = curr;
     }
+    console.log(res);
     return res;
   }
 
@@ -231,16 +248,15 @@ export default class Editor extends Vue {
     document.querySelectorAll("h1, h2, h3, h4")[node[0].id].scrollIntoView();
   }
 
-  handleEditorReady(editor: typeof ClassicEditor): void {
-    // this.$set(this.editorConfig, "toolbar", { items: [] });
-    this.editorInstance = editor;
+  handleEditorReady1(editor: typeof ClassicEditor): void {
+    this.editorInstance1 = editor;
     editor.ui
       .getEditableElement()
       .parentElement.insertBefore(
         editor.ui.view.toolbar.element,
         editor.ui.getEditableElement()
       );
-    this.editorData = `
+    this.editorData1 = `
       <h1>Inline editor</h1>
       Inline editor comes with a floating toolbar that becomes visible when the editor is focused (e.g. by clicking it). Unlike classic editor, inline editor does not render instead of the given element, it simply makes it editable. As a consequence the styles of the edited content will be exactly the same before and after the editor is created.
       <h2>hello</h2>
@@ -801,24 +817,48 @@ export default class Editor extends Vue {
       A common scenario for using
       A common scenario for using
     `;
-    // const toolbarContainer = document.querySelector("#toolbar-container");
-    // (toolbarContainer as Element).appendChild(editor.ui.view.toolbar.element);
     CKEditroInspector.attach(editor);
 
     // editor.execute("placeholder", { value: "time" });
 
-    // this.editorInstance.model.change((writer: any) => {
-    //   writer.insertText(
-    //     "foo",
-    //     this.editorInstance.model.document.selection.getFirstPosition()
-    //   );
-    // });
+    this.editorInstance1.model.change((writer: any) => {
+      console.log(".......");
+      // writer.insertText(
+      //   "foo",
+      //   this.editorInstance.model.document.selection.getFirstPosition()
+      // );
+    });
+  }
+  handleEditorReady2(editor: typeof ClassicEditor): void {
+    // this.$set(this.editorConfig, "toolbar", { items: [] });
+    this.editorInstance2 = editor;
+    editor.editing.view.document.on(
+      "change:isFocused",
+      (evt: Event, data: any, isFocused: boolean) => {
+        console.log(`View document is focused: ${isFocused}`);
+      }
+    );
+    editor.editing.view.focus();
+  }
+
+  handleClick(): void {
+    // this.editorInstance1.focus();
+    console.log("this.editorData1:", this.editorData1);
+    // this.editorInstance1.execute("insertCommentBox", "title", "content");
   }
 }
 </script>
 <style scoped lang="scss">
 .editor {
+  position: relative;
   display: flex;
+  width: 100%;
+  .button {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: 1px solid seagreen;
+  }
   .directory {
     border: 1px solid #ccc;
     min-width: 150px;
@@ -826,8 +866,13 @@ export default class Editor extends Vue {
     margin-bottom: 0;
   }
 
+  .left,
+  .right {
+    width: 50%;
+  }
+
   :v-deep .ck.ck-reset.ck-editor {
-    flex: 1;
+    width: 100%;
     .simple-box {
       padding: 10px;
       margin: 1em 0;
