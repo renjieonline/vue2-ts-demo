@@ -28,13 +28,11 @@ export default class CommentCommand extends Command {
       options.forceValue === undefined ? !this.value : options.forceValue;
 
     model.change((writer: any) => {
-      console.log(
-        selection.anchor,
-        selection.markers,
-        selection.rangeCount,
-        selection.getSelectedElement(),
-        Array.from(selection.getSelectedBlocks())
-      );
+      const range = selection.getFirstRange();
+      console.log(range.getItems().next().value.data);
+      for (const item of range.getItems()) {
+        console.log(item.data);
+      }
       if (selection.isCollapsed) {
         if (value) {
           writer.setSelectionAttribute(this.attributeKey, true);

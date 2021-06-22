@@ -1,5 +1,6 @@
 import Plugin from "@ckeditor/ckeditor5-core/src/plugin";
 import CommentCommand from "./commentcommand";
+import "./theme/comment.scss";
 
 const COMMENT = "comment";
 

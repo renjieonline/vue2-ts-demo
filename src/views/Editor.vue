@@ -42,7 +42,6 @@ import CKEditor from "@ckeditor/ckeditor5-vue2";
 import { escape2Html } from "@/utils";
 
 import Alignment from "@ckeditor/ckeditor5-alignment/src/alignment";
-import AutoFormat from "@ckeditor/ckeditor5-autoformat/src/autoformat";
 import BlockQuote from "@ckeditor/ckeditor5-block-quote/src/blockquote";
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
 import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
@@ -100,7 +99,6 @@ export default class Editor extends Vue {
       Comment,
       Placeholder,
       Alignment,
-      AutoFormat,
       BlockQuote,
       Clipboard,
       // Comments,
@@ -162,7 +160,6 @@ export default class Editor extends Vue {
         "heading",
         "comment",
         "alignment",
-        "autoformat",
         "blockquote",
         "bold",
         "italic",
@@ -205,7 +202,6 @@ export default class Editor extends Vue {
       tagNum: r[1],
       name: escape2Html(r[0].replace(/<[^>]+>/g, "")),
     }));
-    console.log(nodes);
     let res = [];
     if (nodes.length < 2) {
       return nodes;
@@ -234,8 +230,19 @@ export default class Editor extends Vue {
       stack.push(curr);
       prev = curr;
     }
-    console.log(res);
     return res;
+  }
+
+  get comments(): { id: number; name: string }[] {
+    const reg = /(?<=<mark class="comment">).*?(?=<\/mark>)/g;
+    const result = this.editorData1.matchAll(reg);
+    let id = 0;
+    const nodes = Array.from(result).map((r) => ({
+      id: id++,
+      name: escape2Html(r[0].replace(/<[^>]+>/g, "")),
+    }));
+    console.log(nodes);
+    return nodes;
   }
 
   @Watch("title")
@@ -258,7 +265,7 @@ export default class Editor extends Vue {
       );
     this.editorData1 = `
       <h1>Inline editor</h1>
-      Inline editor comes with a floating toolbar that becomes visible when the editor is focused (e.g. by clicking it). Unlike classic editor, inline editor does not render instead of the given element, it simply makes it editable. As a consequence the styles of the edited content will be exactly the same before and after the editor is created.
+      Inline editor <mark class="comment"> comes </mark>with a floating toolbar that becomes visible when the editor is focused (e.g. by clicking it). Unlike classic editor, inline editor does not render instead of the given element, it simply makes it editable. As a consequence the styles of the edited content will be exactly the same before and after the editor is created.
       <h2>hello</h2>
       A common scenario for using inline editor is offering users the possibility to edit content in its real location on a web page instead of doing it in a separate administration section.
       <h1>Inline editor</h1>
@@ -820,6 +827,16 @@ export default class Editor extends Vue {
     CKEditroInspector.attach(editor);
 
     // editor.execute("placeholder", { value: "time" });
+
+    this.editorInstance1.on("afterCommandExec", () => {
+      console.log("qwertyuio");
+    });
+    this.editorInstance1.model.document.selection.on(
+      "change:attribute",
+      (...args) => {
+        console.log("123456789", args);
+      }
+    );
 
     this.editorInstance1.model.change((writer: any) => {
       console.log(".......");
