@@ -4,6 +4,7 @@ export default class CommentCommand extends Command {
   attributeKey = "";
   selectedText = "";
   value = false;
+  selectedMarker = null;
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   constructor(editor: any, attributeKey: string) {
@@ -31,7 +32,6 @@ export default class CommentCommand extends Command {
 
     model.change((writer: any) => {
       let selectedText = "";
-
       if (selection.isCollapsed) {
         if (value) {
           writer.setSelectionAttribute(this.attributeKey, true);
@@ -47,6 +47,10 @@ export default class CommentCommand extends Command {
         for (const range of ranges) {
           if (value) {
             writer.setAttribute(this.attributeKey, value, range);
+            writer.addMarker("" + Math.random(), {
+              range,
+              usingOperation: true,
+            });
           } else {
             writer.removeAttribute(this.attributeKey, range);
           }
@@ -57,6 +61,7 @@ export default class CommentCommand extends Command {
       }
 
       this.selectedText = selectedText;
+      console.log(writer.model.markers);
     });
   }
 

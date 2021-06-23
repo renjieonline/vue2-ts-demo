@@ -47,6 +47,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor"
 import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
 import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
 import Clipboard from "@ckeditor/ckeditor5-clipboard/src/clipboard";
+// import Comments from "@ckeditor/ckeditor5-comments/src/comments";
 import Image from "@ckeditor/ckeditor5-image/src/image";
 import ImageUpload from "@ckeditor/ckeditor5-image/src/imageupload";
 import ImageReaize from "@ckeditor/ckeditor5-image/src/imageresize";
@@ -84,6 +85,10 @@ export default class Editor extends Vue {
   editorData1 = "";
   editorData2 = "";
   editorConfig = {
+    commentsOnly: true,
+    sidebar: {
+      container: document.querySelector(".right"),
+    },
     disabled: true,
     simpleUpload: {
       uploadUrl: "https://ecomm-products.modus.workers.dev/",
@@ -831,12 +836,12 @@ export default class Editor extends Vue {
     this.editorInstance1.on("afterCommandExec", () => {
       console.log("qwertyuio");
     });
-    this.editorInstance1.model.document.selection.on(
-      "change:attribute",
-      (...args: any[]) => {
-        console.log("123456789", args);
-      }
-    );
+    // this.editorInstance1.model.document.selection.on(
+    //   "change:attribute",
+    //   (...args: any[]) => {
+    //     console.log("123456789", args);
+    //   }
+    // );
 
     document
       .querySelector(".ck-button.comment-button")

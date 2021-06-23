@@ -25,7 +25,7 @@ export default class CommentUI extends Plugin {
 
       // Execute command.
       this.listenTo(view, "execute", () => {
-        editor.execute(COMMENT);
+        editor.execute(COMMENT, { forceValue: true });
         editor.editing.view.focus();
       });
 
