@@ -8,7 +8,10 @@ export default class InsertCommentBoxCommand extends Command {
 
   execute(title: string, content: string): void {
     this.editor.model.change((writer: any) => {
-      this.editor.model.insertContent(createCommentBox(writer, title, content));
+      writer.append(
+        createCommentBox(writer, title, content),
+        writer.model.document.getRoot()
+      );
     });
   }
 

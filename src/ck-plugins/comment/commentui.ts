@@ -18,6 +18,7 @@ export default class CommentUI extends Plugin {
         icon: commentIcon,
         tooltip: true,
         isToggleable: true,
+        class: "comment-button",
       });
 
       view.bind("isOn", "isEnabled").to(command, "value", "isEnabled");

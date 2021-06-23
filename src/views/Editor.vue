@@ -833,18 +833,17 @@ export default class Editor extends Vue {
     });
     this.editorInstance1.model.document.selection.on(
       "change:attribute",
-      (...args) => {
+      (...args: any[]) => {
         console.log("123456789", args);
       }
     );
 
-    this.editorInstance1.model.change((writer: any) => {
-      console.log(".......");
-      // writer.insertText(
-      //   "foo",
-      //   this.editorInstance.model.document.selection.getFirstPosition()
-      // );
-    });
+    document
+      .querySelector(".ck-button.comment-button")
+      ?.addEventListener("click", () => {
+        const command = editor.commands.get("comment");
+        this.editorInstance2.execute("insertCommentBox", command.selectedText);
+      });
   }
   handleEditorReady2(editor: typeof ClassicEditor): void {
     // this.$set(this.editorConfig, "toolbar", { items: [] });

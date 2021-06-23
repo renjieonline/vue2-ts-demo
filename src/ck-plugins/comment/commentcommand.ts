@@ -2,6 +2,8 @@ import Command from "@ckeditor/ckeditor5-core/src/command";
 
 export default class CommentCommand extends Command {
   attributeKey = "";
+  selectedText = "";
+  value = false;
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   constructor(editor: any, attributeKey: string) {
@@ -28,11 +30,8 @@ export default class CommentCommand extends Command {
       options.forceValue === undefined ? !this.value : options.forceValue;
 
     model.change((writer: any) => {
-      const range = selection.getFirstRange();
-      console.log(range.getItems().next().value.data);
-      for (const item of range.getItems()) {
-        console.log(item.data);
-      }
+      let selectedText = "";
+
       if (selection.isCollapsed) {
         if (value) {
           writer.setSelectionAttribute(this.attributeKey, true);
@@ -51,8 +50,13 @@ export default class CommentCommand extends Command {
           } else {
             writer.removeAttribute(this.attributeKey, range);
           }
+          for (const item of range.getItems()) {
+            selectedText += item.data;
+          }
         }
       }
+
+      this.selectedText = selectedText;
     });
   }
 
