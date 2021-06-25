@@ -1,0 +1,16 @@
+.comment-box {
+  width: 100%;
+  border: 1px solid #ccc;
+  &-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    &:hover {
+      overflow: visible;
+      white-space: normal;
+    }
+  }
+  &-content:not(:focus) {
+    border-top: 1px solid #ccc;
+  }
+}

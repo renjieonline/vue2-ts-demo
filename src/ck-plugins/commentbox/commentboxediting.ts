@@ -5,6 +5,7 @@ import {
 } from "@ckeditor/ckeditor5-widget/src/utils";
 import Widget from "@ckeditor/ckeditor5-widget/src/widget";
 import InsertCommentBoxCommand from "./insertcommentboxcommand";
+import "./theme/commentbox.scss";
 
 export default class SimpleBoxEditing extends Plugin {
   static get requires(): typeof Widget[] {
@@ -84,7 +85,7 @@ export default class SimpleBoxEditing extends Plugin {
     conversion.for("upcast").elementToElement({
       model: "commentBoxTitle",
       view: {
-        name: "h1",
+        name: "h4",
         classes: "comment-box-title",
       },
     });
@@ -92,7 +93,7 @@ export default class SimpleBoxEditing extends Plugin {
     conversion.for("dataDowncast").elementToElement({
       model: "commentBoxTitle",
       view: {
-        name: "h1",
+        name: "h4",
         classes: "comment-box-title",
       },
     });
@@ -101,11 +102,11 @@ export default class SimpleBoxEditing extends Plugin {
       model: "commentBoxTitle",
       view: (modelElement: any, { writer: viewWriter }: { writer: any }) => {
         // Note: You use a more specialized createEditableElement() method here.
-        const h1 = viewWriter.createEditableElement("h1", {
+        const h4 = viewWriter.createEditableElement("h4", {
           class: "comment-box-title",
         });
 
-        return toWidgetEditable(h1, viewWriter);
+        return toWidgetEditable(h4, viewWriter);
       },
     });
 

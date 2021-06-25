@@ -8,10 +8,18 @@ export default class InsertCommentBoxCommand extends Command {
 
   execute(title: string, content: string): void {
     this.editor.model.change((writer: any) => {
+      console.log(this.editor.model.document);
+      this.editor.editing.view.focus();
+      debugger;
       writer.append(
         createCommentBox(writer, title, content),
         writer.model.document.getRoot()
       );
+      // writer.insert(
+      //   this.editor.model.document.getRoot(),
+      //   createCommentBox(writer, title, content),
+      //   'end'
+      // );
     });
   }
 
@@ -45,6 +53,5 @@ function createCommentBox(writer: any, title: string, content: string) {
 }
 
 // function getCommentBox(writer: any, title: string, content: string) {
-
 //   return commentBox;
 // }

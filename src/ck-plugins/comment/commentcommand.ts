@@ -71,7 +71,6 @@ export default class CommentCommand extends Command {
       }
 
       this.selectedText = selectedText;
-      console.log(writer.model.markers);
     });
   }
 
