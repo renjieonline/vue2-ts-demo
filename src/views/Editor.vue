@@ -833,22 +833,29 @@ export default class Editor extends Vue {
 
     // editor.execute("placeholder", { value: "time" });
 
-    this.editorInstance1.on("afterCommandExec", () => {
-      console.log("qwertyuio");
-    });
     // this.editorInstance1.model.document.selection.on(
     //   "change:attribute",
     //   (...args: any[]) => {
     //     console.log("123456789", args);
     //   }
     // );
-
-    document
-      .querySelector(".ck-button.comment-button")
-      ?.addEventListener("click", () => {
-        const command = editor.commands.get("comment");
-        this.editorInstance2.execute("insertCommentBox", command.selectedText);
-      });
+    const commentCommand = editor.commands.get("comment");
+    commentCommand.on("execute", (evt: any) => {
+      console.log(evt);
+      const { selectedText } = evt.source;
+      selectedText &&
+        this.editorInstance2.execute("insertCommentBox", selectedText);
+    });
+    // commentCommand.on(
+    //   "change:value",
+    //   (evt: any, propertyName: string, val: boolean) => {
+    //     console.log(evt, propertyName, val);
+    //     const { selectedText } = evt.source;
+    //     if (val && selectedText) {
+    //       this.editorInstance2.execute("insertCommentBox", selectedText);
+    //     }
+    //   }
+    // );
   }
   handleEditorReady2(editor: typeof ClassicEditor): void {
     // this.$set(this.editorConfig, "toolbar", { items: [] });

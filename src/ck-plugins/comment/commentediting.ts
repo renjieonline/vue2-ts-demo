@@ -17,7 +17,7 @@ export default class CommentEditing extends Plugin {
     editor.conversion.attributeToElement({
       model: COMMENT,
       view: {
-        name: "span",
+        name: "mark",
         classes: "comment",
       },
     });

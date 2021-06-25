@@ -5,11 +5,13 @@ export default class CommentCommand extends Command {
   selectedText = "";
   value = false;
   selectedMarker = null;
+  selections: any[] = [];
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   constructor(editor: any, attributeKey: string) {
     super(editor);
     this.attributeKey = attributeKey;
+    (window as any).commentCommand = this;
   }
 
   refresh(): void {
@@ -27,10 +29,18 @@ export default class CommentCommand extends Command {
     const model = this.editor.model;
     const doc = model.document;
     const selection = doc.selection;
+    this.selections.push({});
+    console.log(this.selections);
     const value =
       options.forceValue === undefined ? !this.value : options.forceValue;
 
     model.change((writer: any) => {
+      console.log(
+        selection.getFirstPosition(),
+        selection.getFirstRange(),
+        selection.getLastPosition(),
+        selection.getLastRange()
+      );
       let selectedText = "";
       if (selection.isCollapsed) {
         if (value) {
@@ -84,4 +94,6 @@ export default class CommentCommand extends Command {
 
     return false;
   }
+
+  private isSelection;
 }
