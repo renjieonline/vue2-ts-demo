@@ -93,6 +93,4 @@ export default class CommentCommand extends Command {
 
     return false;
   }
-
-  private isSelection;
 }
