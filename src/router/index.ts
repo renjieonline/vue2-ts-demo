@@ -25,6 +25,12 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "editor" */ "../views/Editor.vue"),
   },
+  {
+    path: "/low-code",
+    name: "LowCode",
+    component: () =>
+      import(/* webpackChunkName: "editor" */ "../views/low-code"),
+  },
 ];
 
 const router = new VueRouter({
