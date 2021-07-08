@@ -1,11 +1,11 @@
 import { v4 as uuid } from "uuid";
 
-interface NodeProps {
+export interface NodeProps {
   [propName: string]: any;
 }
 
-interface Node {
-  cid: string;
+export interface Node {
+  cid?: string;
   title: string;
   name: string;
   path: string;
@@ -13,7 +13,7 @@ interface Node {
   children: Node[];
 }
 
-export class ComponetTree {
+export default class ComponetTree {
   treeData: Node = {
     cid: "0",
     title: "",
@@ -23,8 +23,10 @@ export class ComponetTree {
     children: [],
   };
 
-  constructor(data: Node) {
-    this.treeData = data;
+  constructor(data?: Node) {
+    if (data) {
+      this.treeData = data;
+    }
   }
 
   setData(data: Node): void {

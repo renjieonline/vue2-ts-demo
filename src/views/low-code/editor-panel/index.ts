@@ -1,2 +1,2 @@
-import { EditorPanel } from "./EditorPanel";
+import EditorPanel from "./EditorPanel";
 export default EditorPanel;
